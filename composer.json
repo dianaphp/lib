@@ -1,0 +1,37 @@
+{
+    "name": "dianaphp/lib",
+    "description": "the diana support libraries",
+    "keywords": [
+        "diana",
+        "php",
+        "framework"
+    ],
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Diana\\": "src/Diana/",
+            "Diana\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "phpunit"
+        ],
+        "post-update-cmd": [
+            "phpunit"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Antonio Ianzano",
+            "email": "ianzanoan@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}
