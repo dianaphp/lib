@@ -9,13 +9,20 @@ class Filesystem
 {
     // CLEAN
 
+    protected static string $basePath;
+
+    public static function setBasePath(string $basePath)
+    {
+        self::$basePath = $basePath;
+    }
+
     public static function absPath(array|string $segments = ["."], string $delimiter = "/")
     {
         if (is_string($segments))
             $segments = explode($delimiter, $segments);
 
         if (isset($segments[0]) && $segments[0] == ".")
-            $segments[0] = Application::getInstance()->getPath();
+            $segments[0] = self::$basePath ?? "";
 
         return join(DIRECTORY_SEPARATOR, $segments);
     }
