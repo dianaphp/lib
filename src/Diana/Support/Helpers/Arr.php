@@ -48,74 +48,6 @@ class Arr
     }
 
     /**
-     * Determine whether the given value is array accessible.
-     *
-     * @param  mixed  $value
-     * @return bool
-     */
-    public static function accessible($value)
-    {
-        return is_array($value) || $value instanceof ArrayAccess;
-    }
-
-    /**
-     * Determine if the given key exists in the provided array.
-     *
-     * @param  iterable  $array
-     * @param  string|int  $key
-     * @return bool
-     */
-    public static function exists(iterable $array, string|int $key)
-    {
-        if ($array instanceof ArrayAccess) {
-            return $array->offsetExists($key);
-        }
-
-        if (is_float($key)) {
-            $key = (string) $key;
-        }
-
-        return array_key_exists($key, $array);
-    }
-
-    /**
-     * Get an item from an array using "dot" notation.
-     *
-     * @param  \ArrayAccess|array  $array
-     * @param  string|int|null  $key
-     * @param  mixed  $default
-     * @return mixed
-     */
-    public static function get($array, $key, $default = null)
-    {
-        if (!static::accessible($array)) {
-            return Data::valueOf($default);
-        }
-
-        if (is_null($key)) {
-            return $array;
-        }
-
-        if (static::exists($array, $key)) {
-            return $array[$key];
-        }
-
-        if (!str_contains($key, '.')) {
-            return $array[$key] ?? Data::valueOf($default);
-        }
-
-        foreach (explode('.', $key) as $segment) {
-            if (static::accessible($array) && static::exists($array, $segment)) {
-                $array = $array[$segment];
-            } else {
-                return Data::valueOf($default);
-            }
-        }
-
-        return $array;
-    }
-
-    /**
      * If the given value is not an array and not null, wrap it in one.
      *
      * @param  mixed  $value
@@ -142,50 +74,6 @@ class Arr
     }
 
     /**
-     * Remove one or many array items from a given array using "dot" notation.
-     *
-     * @param  iterable  $array
-     * @param  iterable|string|int|float  $keys
-     * @return void
-     */
-    public static function forget(iterable &$array, iterable|string|int|float $keys): void
-    {
-        $original = &$array;
-
-        $keys = (array) $keys;
-
-        if (count($keys) === 0) {
-            return;
-        }
-
-        foreach ($keys as $key) {
-            // if the exact key exists in the top-level, remove it
-            if (static::exists($array, $key)) {
-                unset($array[$key]);
-
-                continue;
-            }
-
-            $parts = explode('.', $key);
-
-            // clean up before each pass
-            $array = &$original;
-
-            while (count($parts) > 1) {
-                $part = array_shift($parts);
-
-                if (isset($array[$part]) && static::accessible($array[$part])) {
-                    $array = &$array[$part];
-                } else {
-                    continue 2;
-                }
-            }
-
-            unset($array[array_shift($parts)]);
-        }
-    }
-
-    /**
      * Get all of the given array except for a specified array of keys.
      *
      * @param  iterable  $array
@@ -194,7 +82,9 @@ class Arr
      */
     public static function except(iterable $array, iterable|string|int|float $keys): iterable
     {
-        static::forget($array, $keys);
+        foreach (Arr::wrap($keys) as $key)
+            if (isset($array[$key]))
+                unset($array[$key]);
 
         return $array;
     }
@@ -247,7 +137,7 @@ class Arr
 
         foreach ($array as $values) {
             if ($values instanceof Collection) {
-                $values = $values->all();
+                $values = $values->getAll();
             } elseif (!is_array($values)) {
                 continue;
             }
@@ -283,7 +173,7 @@ class Arr
 
             if ($segment === '*') {
                 if ($target instanceof Collection) {
-                    $target = $target->all();
+                    $target = $target->getAll();
                 } elseif (!is_iterable($target)) {
                     return Data::valueOf($default);
                 }
@@ -306,7 +196,7 @@ class Arr
                 default => $segment,
             };
 
-            if (Arr::accessible($target) && Arr::exists($target, $segment)) {
+            if (is_iterable($target) && isset($target[$segment])) {
                 $target = $target[$segment];
             } elseif (is_object($target) && isset($target->{$segment})) {
                 $target = $target->{$segment};

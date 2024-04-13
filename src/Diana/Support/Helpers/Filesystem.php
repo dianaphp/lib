@@ -2,8 +2,7 @@
 
 namespace Diana\Support\Helpers;
 
-use Diana\Exceptions\FileNotFoundException;
-use Diana\Runtime\Application;
+use Diana\Support\Exceptions\FileNotFoundException;
 
 class Filesystem
 {
@@ -26,11 +25,6 @@ class Filesystem
 
         return join(DIRECTORY_SEPARATOR, $segments);
     }
-
-
-
-    // TODO: UNCLEAN
-
 
     /**
      * Get the returned value of a file.
@@ -56,6 +50,8 @@ class Filesystem
 
         throw new FileNotFoundException("File does not exist at path {$path}.");
     }
+
+    // TODO: UNCLEAN
 
     /**
      * Get the contents of a file.

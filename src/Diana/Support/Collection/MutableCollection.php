@@ -4,7 +4,7 @@ namespace Diana\Support\Collection;
 
 use ArrayAccess;
 use Countable;
-use Diana\Exceptions\MutationException;
+use Diana\Support\Exceptions\MutationException;
 use JsonSerializable;
 use Stringable;
 use Iterator;

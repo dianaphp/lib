@@ -18,7 +18,7 @@ final class Str
      */
     public static function camel(string $string): string
     {
-        return static::lcfirst(static::studly($string));
+        return lcfirst(static::studly($string));
     }
 
     /**
@@ -29,9 +29,9 @@ final class Str
      */
     public static function studly(string $string): string
     {
-        $words = explode(' ', static::replace(['-', '_'], ' ', $string));
+        $words = explode(' ', str_replace(['-', '_'], ' ', $string));
 
-        $studlyWords = array_map(fn($word) => static::ucfirst($word), $words);
+        $studlyWords = array_map(fn($word) => ucfirst($word), $words);
 
         return implode($studlyWords);
     }
@@ -54,54 +54,6 @@ final class Str
         }
 
         return false;
-    }
-
-    /**
-     * Make a string's first character uppercase.
-     *
-     * @param  string  $string
-     * @return string
-     */
-    public static function ucfirst(string $string, string $encoding = 'UTF-8'): string
-    {
-        return static::upper(static::substr($string, 0, 1, $encoding), $encoding) . static::substr($string, 1, null, $encoding);
-    }
-
-    //Convert the given string to upper-case.
-    public static function upper(string $string, string $encoding = 'UTF-8'): string
-    {
-        return mb_strtoupper($string, $encoding);
-    }
-
-    // Make a string's first character lowercase.
-    public static function lcfirst(string $string, string $encoding = 'UTF-8')
-    {
-        return static::lower(static::substr($string, 0, 1, $encoding), $encoding) . static::substr($string, 1, null, $encoding);
-    }
-
-    /**
-     * Convert the given string to lower-case.
-     *
-     * @param  string  $string
-     * @return string
-     */
-    public static function lower(string $string, string $encoding = 'UTF-8')
-    {
-        return mb_strtolower($string, $encoding);
-    }
-
-    /**
-     * Returns the portion of the string specified by the start and length parameters.
-     *
-     * @param  string  $string
-     * @param  int  $start
-     * @param  int|null  $length
-     * @param  string  $encoding
-     * @return string
-     */
-    public static function substr($string, $start, $length = null, $encoding = 'UTF-8')
-    {
-        return mb_substr($string, $start, $length, $encoding);
     }
 
     /**
@@ -133,22 +85,6 @@ final class Str
         }
 
         return false;
-    }
-
-    /**
-     * Replace the given value in the given string.
-     *
-     * @param  string|iterable<string>  $subject
-     * @param  string|iterable<string>  $search
-     * @param  string|iterable<string>  $replace
-     * @param  bool  $caseSensitive
-     * @return string|string[]
-     */
-    public static function replace($search, $replace, $subject, $caseSensitive = true)
-    {
-        return $caseSensitive
-            ? str_replace($search, $replace, $subject)
-            : str_ireplace($search, $replace, $subject);
     }
 
     /**
@@ -238,18 +174,6 @@ final class Str
     }
 
     /**
-     * Return the length of the given string.
-     *
-     * @param  string  $string
-     * @param  string|null  $encoding
-     * @return int
-     */
-    public static function length($string, $encoding = null)
-    {
-        return mb_strlen($string, $encoding);
-    }
-
-    /**
      * Convert a string to snake case.
      *
      * @param  string  $string
@@ -261,7 +185,7 @@ final class Str
         if (!ctype_lower($string)) {
             $string = preg_replace('/\s+/u', '', ucwords($string));
 
-            $string = static::lower(preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $string));
+            $string = strtolower(preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $string));
         }
 
         return $string;
@@ -286,7 +210,7 @@ final class Str
             return $subject;
         }
 
-        return static::substr($subject, 0, $pos);
+        return substr($subject, 0, $pos);
     }
 
     /**
