@@ -79,15 +79,21 @@ class ArraySerializer
             if (is_object($value))
                 $value = (array) $value;
 
+            $this->content .= str_repeat(' ', $this->indentation * $this->tabSize);
             if ($associative)
-                $this->content .= str_repeat(' ', $this->indentation * $this->tabSize) . "'{$key}' => ";
+                $this->content .= "'{$key}' => ";
 
             if (is_array($value)) {
                 $this->content .= '[';
                 $this->indentation++;
+
+                if (!empty($value))
+                    $this->content .= PHP_EOL;
                 $this->serializeLines($value, $transform);
                 $this->indentation--;
-                $this->content .= '],';
+                if (!empty($value))
+                    $this->content .= str_repeat(' ', $this->indentation * $this->tabSize);
+                $this->content .= '],' . PHP_EOL;
 
                 continue;
             }
