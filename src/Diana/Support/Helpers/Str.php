@@ -7,7 +7,7 @@ final class Str
 {
     public static function formatClass(string $string, string $separator = ':'): string
     {
-        return implode('\\', array_map(fn($segment) => ucfirst(static::camel($segment)), explode($separator, $string)));
+        return implode('\\', array_map(fn($segment) => ucfirst(Str::camel($segment)), explode($separator, $string)));
     }
 
     /**
@@ -18,7 +18,7 @@ final class Str
      */
     public static function camel(string $string): string
     {
-        return lcfirst(static::studly($string));
+        return lcfirst(Str::studly($string));
     }
 
     /**
@@ -170,7 +170,7 @@ final class Str
      */
     public static function kebab($string)
     {
-        return static::snake($string, '-');
+        return Str::snake($string, '-');
     }
 
     /**
