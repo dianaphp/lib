@@ -4,5 +4,4 @@ namespace Diana\Drivers\Routing;
 
 interface RequestInterface
 {
-
 }

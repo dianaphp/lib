@@ -70,29 +70,34 @@ class ArraySerializer
 
     public function serializeLines(iterable $array, Closure $transform = null): static
     {
-        if (!$transform)
-            $transform = fn($value) => is_string($value) ? preg_replace("/([^\\\])'/", "$1\'", $value) : $value;
+        if (!$transform) {
+            $transform = fn ($value) => is_string($value) ? preg_replace("/([^\\\])'/", "$1\'", $value) : $value;
+        }
 
         $associative = Arr::isAssociative($array);
 
         foreach ($array as $key => $value) {
-            if (is_object($value))
+            if (is_object($value)) {
                 $value = (array) $value;
+            }
 
             $this->content .= str_repeat(' ', $this->indentation * $this->tabSize);
-            if ($associative)
+            if ($associative) {
                 $this->content .= "'{$key}' => ";
+            }
 
             if (is_array($value)) {
                 $this->content .= '[';
                 $this->indentation++;
 
-                if (!empty($value))
+                if (!empty($value)) {
                     $this->content .= PHP_EOL;
+                }
                 $this->serializeLines($value, $transform);
                 $this->indentation--;
-                if (!empty($value))
+                if (!empty($value)) {
                     $this->content .= str_repeat(' ', $this->indentation * $this->tabSize);
+                }
                 $this->content .= '],' . PHP_EOL;
 
                 continue;
