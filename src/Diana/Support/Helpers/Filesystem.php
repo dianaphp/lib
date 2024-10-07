@@ -6,36 +6,16 @@ use Diana\Support\Exceptions\FileNotFoundException;
 
 class Filesystem
 {
-    // CLEAN
-
-    protected static string $basePath;
-
-    public static function setBasePath(string $basePath)
-    {
-        self::$basePath = $basePath;
-    }
-
-    public static function absPath(array|string $segments = ["."], string $delimiter = "/")
-    {
-        if (is_string($segments))
-            $segments = explode($delimiter, $segments);
-
-        if (isset($segments[0]) && $segments[0] == ".")
-            $segments[0] = self::$basePath ?? "";
-
-        return join(DIRECTORY_SEPARATOR, $segments);
-    }
-
     /**
      * Get the returned value of a file.
      *
-     * @param  string  $path
-     * @param  array  $data
+     * @param string $path
+     * @param array  $data
      * @return mixed
      *
      * @throws FileNotFoundException
      */
-    public static function getRequire($path, array $data = [])
+    public static function getRequire(string $path, array $data = []): mixed
     {
         if (is_file($path)) {
             $__path = $path;

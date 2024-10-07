@@ -49,7 +49,7 @@ class ArraySerializer
      */
     public function terminate(): static
     {
-        $this->content .= '];';
+        $this->content .= "];\n";
         return $this;
     }
 
