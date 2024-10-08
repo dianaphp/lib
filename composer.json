@@ -29,7 +29,8 @@
         }
     ],
     "require": {
-        "php": ">=8.0"
+        "php": ">=8.0",
+        "psr/container": "^2.0@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
