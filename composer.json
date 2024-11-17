@@ -12,7 +12,10 @@
         "psr-4": {
             "Diana\\": "src/Diana/",
             "Diana\\Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "scripts": {
         "post-install-cmd": [
