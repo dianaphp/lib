@@ -72,6 +72,7 @@ class ArraySerializer
     {
         if (!$transform) {
             $transform = fn ($value) => is_string($value) ? preg_replace("/([^\\\])'/", "$1\'", $value) : $value;
+            // todo: check if string is_a class and transform it to ::class
         }
 
         $associative = Arr::isAssociative($array);
