@@ -3,7 +3,7 @@
 namespace Diana\Support\Serializer;
 
 use Closure;
-use Diana\Support\Helpers\Arr;
+use InvalidArgumentException;
 
 class ArraySerializer
 {
@@ -23,7 +23,7 @@ class ArraySerializer
      */
     public function run(
         mixed $array,
-        Closure $transform = null
+        ?Closure $transform = null
     ): static {
         return $this
             ->serializeLines($array, $transform)
@@ -61,21 +61,17 @@ class ArraySerializer
      */
     public static function serialize(
         mixed $array,
-        Closure $transform = null
+        ?Closure $transform = null
     ): string {
         return (new ArraySerializer())
             ->run($array, $transform)
             ->getContent();
     }
 
-    public function serializeLines(iterable $array, Closure $transform = null): static
+    public function serializeLines(iterable $array, ?Closure $transform = null): static
     {
-        if (!$transform) {
-            $transform = fn ($value) => is_string($value) ? preg_replace("/([^\\\])'/", "$1\'", $value) : $value;
-            // todo: check if string is_a class and transform it to ::class
-        }
-
-        $associative = Arr::isAssociative($array);
+        $array = is_array($array) ? $array : iterator_to_array($array);
+        $associative = !array_is_list($array);
 
         foreach ($array as $key => $value) {
             if (is_object($value)) {
@@ -84,7 +80,7 @@ class ArraySerializer
 
             $this->content .= str_repeat(' ', $this->indentation * $this->tabSize);
             if ($associative) {
-                $this->content .= "'{$key}' => ";
+                $this->content .= var_export($key, true) . ' => ';
             }
 
             if (is_array($value)) {
@@ -104,13 +100,12 @@ class ArraySerializer
                 continue;
             }
 
-            $value = $transform($value);
+            $value = $transform ? $transform($value) : $value;
+            if ($value !== null && !is_scalar($value)) {
+                throw new InvalidArgumentException('ArraySerializer values must be null, scalars, or arrays.');
+            }
 
-            $this->content .= match (true) {
-                is_string($value) => "'{$value}'",
-                is_bool($value) => $value ? 'true' : 'false',
-                default => $value
-            } . ',' . PHP_EOL;
+            $this->content .= var_export($value, true) . ',' . PHP_EOL;
         }
 
         return $this;
