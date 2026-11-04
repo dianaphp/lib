@@ -15,7 +15,7 @@ class Collection implements ArrayAccess, JsonSerializable, Stringable, Iterator,
 {
     protected array $items = [];
 
-    public function __construct(self|array|null $byValue = [], self|array &$byReference = null, $preserveClass = true, protected array $hidden = [], protected array $visible = [])
+    public function __construct(self|array|null $byValue = [], self|array|null &$byReference = null, $preserveClass = true, protected array $hidden = [], protected array $visible = [])
     {
         if ($byReference == null) {
             $class = $preserveClass ? static::class : self::class;
@@ -51,7 +51,7 @@ class Collection implements ArrayAccess, JsonSerializable, Stringable, Iterator,
         return new static(iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator($this->items)), true));
     }
 
-    public function indexOf(string $value = null): bool|int|string
+    public function indexOf(?string $value = null): bool|int|string
     {
         return array_search($value, $this->attributes);
     }

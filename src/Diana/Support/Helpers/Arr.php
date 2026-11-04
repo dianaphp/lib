@@ -14,7 +14,7 @@ class Arr
      * @param  mixed  $default
      * @return mixed
      */
-    public static function last(iterable $array, callable $callback = null, $default = null)
+    public static function last(iterable $array, ?callable $callback = null, $default = null)
     {
         $lastKey = array_key_last($array);
         if (!$lastKey)
@@ -38,7 +38,7 @@ class Arr
      * @param  TFirstDefault|(\Closure(): TFirstDefault)  $default
      * @return TValue|TFirstDefault
      */
-    public static function first(iterable $array, callable $callback = null, $default = null)
+    public static function first(iterable $array, ?callable $callback = null, $default = null)
     {
         foreach ($array as $key => $value)
             if (is_callable($callback) && $callback($value, $key))
