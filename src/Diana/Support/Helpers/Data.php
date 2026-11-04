@@ -4,6 +4,7 @@ namespace Diana\Support\Helpers;
 
 use ReflectionNamedType;
 use ReflectionParameter;
+use ReflectionUnionType;
 use Closure;
 
 class Data
@@ -54,7 +55,7 @@ class Data
      * @param  \ReflectionParameter  $parameter
      * @return array
      */
-    public static function getParameterClassNames($parameter)
+    public static function getParameterClassNames(ReflectionParameter $parameter): array
     {
         $type = $parameter->getType();
 
@@ -82,7 +83,7 @@ class Data
      * @param  \ReflectionNamedType  $type
      * @return string
      */
-    protected static function getTypeName($parameter, $type)
+    protected static function getTypeName(ReflectionParameter $parameter, ReflectionNamedType $type): string
     {
         $name = $type->getName();
 

@@ -13,7 +13,7 @@ class MutableCollection extends Collection implements ArrayAccess, JsonSerializa
 {
     protected bool $pushable = false;
 
-    public function __construct(self|array|null $byValue = [], self|array &$byReference = null, $preserveClass = true, protected array $visible = [], protected array $hidden = [], protected array $fillable = [])
+    public function __construct(self|array|null $byValue = [], self|array|null &$byReference = null, $preserveClass = true, protected array $visible = [], protected array $hidden = [], protected array $fillable = [])
     {
         parent::__construct($byValue, $byReference, $preserveClass, $visible, $hidden);
     }
@@ -44,6 +44,7 @@ class MutableCollection extends Collection implements ArrayAccess, JsonSerializa
         return $this->fillable;
     }
 
+    #[\Override]
     public function set(mixed $item, mixed $value): void
     {
         if (!in_array($item, $this->fillable))
@@ -52,6 +53,7 @@ class MutableCollection extends Collection implements ArrayAccess, JsonSerializa
         parent::set($item, $value);
     }
 
+    #[\Override]
     public function push(mixed $value): void
     {
         if (!$this->pushable)
@@ -60,6 +62,7 @@ class MutableCollection extends Collection implements ArrayAccess, JsonSerializa
         parent::push($value);
     }
 
+    #[\Override]
     public function remove(mixed $item): void
     {
         if (!in_array($item, $this->fillable))

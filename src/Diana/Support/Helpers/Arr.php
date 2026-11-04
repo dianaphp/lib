@@ -16,14 +16,24 @@ class Arr
      */
     public static function last(iterable $array, ?callable $callback = null, $default = null)
     {
-        $lastKey = array_key_last($array);
-        if (!$lastKey)
-            return Data::valueOf($default);
+        if (is_array($array)) {
+            if ($callback !== null) {
+                return self::first(array_reverse($array, true), $callback, $default);
+            }
 
-        if (is_callable($callback))
-            $callback($lastKey, $array[$lastKey]);
+            return $array === [] ? Data::valueOf($default) : array_last($array);
+        }
 
-        return $array[$lastKey];
+        $found = false;
+        $last = null;
+        foreach ($array as $key => $value) {
+            if ($callback === null || $callback($value, $key)) {
+                $last = $value;
+                $found = true;
+            }
+        }
+
+        return $found ? $last : Data::valueOf($default);
     }
 
     /**
@@ -40,9 +50,20 @@ class Arr
      */
     public static function first(iterable $array, ?callable $callback = null, $default = null)
     {
-        foreach ($array as $key => $value)
-            if (is_callable($callback) && $callback($value, $key))
+        if (is_array($array)) {
+            if ($callback === null) {
+                return $array === [] ? Data::valueOf($default) : array_first($array);
+            }
+
+            $key = array_find_key($array, $callback);
+            return $key === null ? Data::valueOf($default) : $array[$key];
+        }
+
+        foreach ($array as $key => $value) {
+            if ($callback === null || $callback($value, $key)) {
                 return $value;
+            }
+        }
 
         return Data::valueOf($default);
     }
