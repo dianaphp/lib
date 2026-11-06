@@ -15,7 +15,8 @@ class Collection implements ArrayAccess, JsonSerializable, Stringable, Iterator,
 {
     protected array $items = [];
 
-    public function __construct(self|array|null $byValue = [], self|array|null &$byReference = null, $preserveClass = true, protected array $hidden = [], protected array $visible = [])
+    // null allows every non-hidden key; [] explicitly allows no keys.
+    public function __construct(self|array|null $byValue = [], self|array|null &$byReference = null, $preserveClass = true, protected array $hidden = [], protected ?array $visible = null)
     {
         if ($byReference == null) {
             $class = $preserveClass ? static::class : self::class;
@@ -78,38 +79,44 @@ class Collection implements ArrayAccess, JsonSerializable, Stringable, Iterator,
 
     public function setHidden(string|array ...$items)
     {
-        $this->hidden = array_merge($this->hidden, (array) $items);
+        $this->hidden = array_merge($this->hidden, $this->normalizeVisibilityKeys($items));
 
         return $this;
     }
 
     public function unsetHidden(string|array ...$items)
     {
-        $this->hidden = array_diff($this->hidden, (array) $items);
+        $this->hidden = array_diff($this->hidden, $this->normalizeVisibilityKeys($items));
 
         return $this;
     }
 
     public function setVisible(string|array ...$items)
     {
-        $this->visible = array_diff($this->visible, (array) $items);
+        $this->visible = array_merge($this->visible ?? [], $this->normalizeVisibilityKeys($items));
 
         return $this;
     }
 
     public function unsetVisible(string|array ...$items)
     {
-        $this->visible = array_merge($this->visible, (array) $items);
+        $this->visible = array_diff($this->visible ?? array_keys($this->items), $this->normalizeVisibilityKeys($items));
 
         return $this;
     }
 
     public function getVisibleKeys(): array
     {
-        if (empty($this->visible))
-            return array_diff(array_keys($this->items), $this->getHiddenKeys());
-        else
-            return $this->visible;
+        return array_diff($this->visible ?? array_keys($this->items), $this->getHiddenKeys());
+    }
+
+    private function normalizeVisibilityKeys(array $items): array
+    {
+        $keys = [];
+        foreach ($items as $item)
+            $keys = array_merge($keys, (array) $item);
+
+        return $keys;
     }
 
     public function getVisible(): array

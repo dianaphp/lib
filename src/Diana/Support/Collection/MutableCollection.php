@@ -13,9 +13,9 @@ class MutableCollection extends Collection implements ArrayAccess, JsonSerializa
 {
     protected bool $pushable = false;
 
-    public function __construct(self|array|null $byValue = [], self|array|null &$byReference = null, $preserveClass = true, protected array $visible = [], protected array $hidden = [], protected array $fillable = [])
+    public function __construct(self|array|null $byValue = [], self|array|null &$byReference = null, $preserveClass = true, ?array $visible = null, array $hidden = [], protected array $fillable = [])
     {
-        parent::__construct($byValue, $byReference, $preserveClass, $visible, $hidden);
+        parent::__construct($byValue, $byReference, $preserveClass, hidden: $hidden, visible: $visible);
     }
 
     public function allow(string|array ...$items)
