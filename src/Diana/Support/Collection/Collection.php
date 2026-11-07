@@ -37,14 +37,14 @@ class Collection implements ArrayAccess, JsonSerializable, Stringable, Iterator,
     public function wrap(string $pre, string $post): string
     {
         $result = '';
-        foreach ($this->attributes as $attribute)
+        foreach ($this->items as $attribute)
             $result .= $pre . $attribute . $post;
         return $result;
     }
 
     public function join(string $separator): string
     {
-        return join($separator, $this->attributes);
+        return join($separator, $this->items);
     }
 
     public function flat(): static
@@ -52,16 +52,16 @@ class Collection implements ArrayAccess, JsonSerializable, Stringable, Iterator,
         return new static(iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator($this->items)), true));
     }
 
-    public function indexOf(?string $value = null): bool|int|string
+    public function indexOf(mixed $value = null): bool|int|string
     {
-        return array_search($value, $this->attributes);
+        return array_search($value, $this->items);
     }
 
     //
 
     public function get(mixed $item = null): mixed
     {
-        if ($item)
+        if ($item !== null)
             return $this->items[$item];
 
         return $this->getAll();
@@ -151,7 +151,7 @@ class Collection implements ArrayAccess, JsonSerializable, Stringable, Iterator,
 
     public function set(mixed $item, mixed $value): void
     {
-        if ($item)
+        if ($item !== null)
             $this->items[$item] = $value;
         else
             $this->push($value);
@@ -169,7 +169,7 @@ class Collection implements ArrayAccess, JsonSerializable, Stringable, Iterator,
 
     public function first(): mixed
     {
-        return $this->items[$this->firstKey()];
+        return Arr::first($this->items);
     }
 
     public function __toString(): string
@@ -244,7 +244,7 @@ class Collection implements ArrayAccess, JsonSerializable, Stringable, Iterator,
 
     public function isAssociative(): bool
     {
-        return array_keys($this->items) !== range(0, $this->count() - 1);
+        return !array_is_list($this->items);
     }
 
     public function isIterable(): bool
